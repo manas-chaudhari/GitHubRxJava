@@ -24,7 +24,7 @@ public class MainViewModel implements ViewModel {
         repositories =
                 toObservable(this.username)
                 .sample(onSearchClick)
-                .flatMap(new Func1<String, Observable<List<ViewModel>>>() {
+                .switchMap(new Func1<String, Observable<List<ViewModel>>>() {
             @Override
             public Observable<List<ViewModel>> call(String username) {
                 return GitHubClient.getInstance()
