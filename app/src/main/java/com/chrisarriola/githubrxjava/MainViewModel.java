@@ -16,7 +16,7 @@ import rx.subjects.PublishSubject;
 import static com.manaschaudhari.android_mvvm.FieldUtils.toObservable;
 
 public class MainViewModel implements ViewModel {
-    public final Observable<List<ViewModel>> repositories;
+    public final Observable<List<GithubRepoVM>> repositories;
     public final ObservableField<String> username = new ObservableField<>();
     public final PublishSubject<Void> onSearchClick = PublishSubject.create();
 
@@ -24,17 +24,17 @@ public class MainViewModel implements ViewModel {
         repositories =
                 toObservable(this.username)
                 .sample(onSearchClick)
-                .switchMap(new Func1<String, Observable<List<ViewModel>>>() {
+                .switchMap(new Func1<String, Observable<List<GithubRepoVM>>>() {
             @Override
-            public Observable<List<ViewModel>> call(String username) {
+            public Observable<List<GithubRepoVM>> call(String username) {
                 return GitHubClient.getInstance()
                         .getStarredRepos(username)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .map(new Func1<List<GitHubRepo>, List<ViewModel>>() {
+                        .map(new Func1<List<GitHubRepo>, List<GithubRepoVM>>() {
                             @Override
-                            public List<ViewModel> call(List<GitHubRepo> gitHubRepos) {
-                                List<ViewModel> vms = new ArrayList<>();
+                            public List<GithubRepoVM> call(List<GitHubRepo> gitHubRepos) {
+                                List<GithubRepoVM> vms = new ArrayList<>();
                                 for (GitHubRepo repo : gitHubRepos) {
                                     vms.add(new GithubRepoVM(repo));
                                 }
